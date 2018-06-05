@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="nlp," />
 
 
 
@@ -79,16 +79,18 @@
 
 
 
-<meta name="description" content="To believe, to gain.">
-<meta property="og:type" content="website">
-<meta property="og:title" content="CraiHe&#39;s">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
+<meta name="keywords" content="nlp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Word Embedding">
+<meta property="og:url" content="http://yoursite.com/2018/06/05/Word-Embedding/index.html">
 <meta property="og:site_name" content="CraiHe&#39;s">
-<meta property="og:description" content="To believe, to gain.">
+<meta property="og:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
 <meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-06-05T05:43:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CraiHe&#39;s">
-<meta name="twitter:description" content="To believe, to gain.">
+<meta name="twitter:title" content="Word Embedding">
+<meta name="twitter:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
 
 
 
@@ -118,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/06/05/Word-Embedding/"/>
 
 
 
 
 
-  <title>CraiHe's</title>
+  <title>Word Embedding | CraiHe's</title>
   
 
 
@@ -143,8 +145,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -217,9 +218,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -249,9 +250,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/06/05/Word-Embedding/" itemprop="url">Word Embedding</a></h1>
+          <h1 class="post-title" itemprop="name headline">Word Embedding</h1>
         
 
         <div class="post-meta">
@@ -301,9 +300,7 @@
       
 
       
-        
-          
-            <h2 id="词向量（Word-embedding-词嵌入）"><a href="#词向量（Word-embedding-词嵌入）" class="headerlink" title="词向量（Word embedding, 词嵌入）"></a>词向量（Word embedding, 词嵌入）</h2><p><strong>词向量(Word Embedding)</strong>，按照字面意思应该是”<strong>词嵌入</strong>“，或称<strong>分布式表示(Distributed Representation)</strong> 「其实这三种描述方式中，<strong>Distributed Representation</strong>是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类的框架还有一个Embedding层，也说是将词ID映射为向量。由于先入为主的意识，大家可能就会将词向量跟Word2Vec等同起来，而反过来问“Embedding是哪种词向量？”这类问题，尤其是对于初学者来说，应该是很混淆的。事实上，哪怕对于老手，也不一定能够很好地说清楚。</p>
+        <h2 id="词向量（Word-embedding-词嵌入）"><a href="#词向量（Word-embedding-词嵌入）" class="headerlink" title="词向量（Word embedding, 词嵌入）"></a>词向量（Word embedding, 词嵌入）</h2><p><strong>词向量(Word Embedding)</strong>，按照字面意思应该是”<strong>词嵌入</strong>“，或称<strong>分布式表示(Distributed Representation)</strong> 「其实这三种描述方式中，<strong>Distributed Representation</strong>是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类的框架还有一个Embedding层，也说是将词ID映射为向量。由于先入为主的意识，大家可能就会将词向量跟Word2Vec等同起来，而反过来问“Embedding是哪种词向量？”这类问题，尤其是对于初学者来说，应该是很混淆的。事实上，哪怕对于老手，也不一定能够很好地说清楚。</p>
 <p>这一切，还得从one-hot说起…</p>
 <h3 id="1-One-hot"><a href="#1-One-hot" class="headerlink" title="1. One-hot"></a>1. One-hot</h3><p>One-hot(One-hot编码)也称作一位有效编码，即在一个向量表示中只有一个分量是有效的，例如“学校就在前方”对应的one-hot编码即可表示为：<br>$$<br>\begin{array}{c|c}<br>\hline<br>\text{学} &amp; [1, 0, 0, 0, 0, 0]\<br>\text{校} &amp; [0, 1, 0, 0, 0, 0]\<br>\text{就} &amp; [0, 0, 1, 0, 0, 0]\<br>\text{在} &amp; [0, 0, 0, 1, 0, 0]\<br>\text{前} &amp; [0, 0, 0, 0, 1, 0]\<br>\text{方} &amp; [0, 0, 0, 0, 0, 1]\<br>\hline<br>\end{array}<br>$$<br>那么对应的“学校”这个词就可以用如下字向量构成的矩阵对应表示：<br>$$<br>\begin{pmatrix}1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\  0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}<br>$$<br>看到这儿，大家可能感觉到问题了，有多少个字，就得有多少维向量，假如有1万字，那么每个字向量就是1万维（但常用的字不多，可能也就几千个左右，但是按照词的概念来看，常用的词可能就有十几万了）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这时候，我们在有的地方会看到有些初学者这样说的，甚至不少专家也是这样说的:"这时候我们就考虑出来了“连续向量表示”，比如用100维的实数向量来表示一个字，这样就大大降低了维度，降低了过拟合的风险，降低了运算量等等"</span></span><br></pre></td></tr></table></figure>
@@ -350,8 +347,6 @@
 <p>这里还要说明一下<a href="https://zhuanlan.zhihu.com/p/22386230" target="_blank" rel="noopener">“Distributional Representation“和”Distributed Representation”的区别</a>。</p>
 </blockquote>
 
-          
-        
       
     </div>
     
@@ -366,14 +361,20 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"># nlp</a>
+          
+        </div>
+      
+
+      
+      
+      
 
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -383,10 +384,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -394,6 +396,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -414,8 +420,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -466,6 +481,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#词向量（Word-embedding-词嵌入）"><span class="nav-number">1.</span> <span class="nav-text">词向量（Word embedding, 词嵌入）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-One-hot"><span class="nav-number">1.1.</span> <span class="nav-text">1. One-hot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-词向量表示"><span class="nav-number">1.2.</span> <span class="nav-text">2. 词向量表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-词向量的生成方式"><span class="nav-number">1.3.</span> <span class="nav-text">3. 词向量的生成方式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -599,6 +630,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
