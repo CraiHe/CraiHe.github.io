@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="CraiHe&#39;s">
 <meta property="og:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-06-06T01:04:05.000Z">
+<meta property="og:updated_time" content="2018-06-06T01:14:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Word Embedding">
 <meta name="twitter:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
@@ -303,9 +303,9 @@
         <h2 id="词向量（Word-embedding-词嵌入）"><a href="#词向量（Word-embedding-词嵌入）" class="headerlink" title="词向量（Word embedding, 词嵌入）"></a>词向量（Word embedding, 词嵌入）</h2><p><strong>词向量(Word Embedding)</strong>，按照字面意思应该是”<strong>词嵌入</strong>“，或称<strong>分布式表示(Distributed Representation)</strong> 「其实这三种描述方式中，<strong>Distributed Representation</strong>是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类的框架还有一个Embedding层，也说是将词ID映射为向量。由于先入为主的意识，大家可能就会将词向量跟Word2Vec等同起来，而反过来问“Embedding是哪种词向量？”这类问题，尤其是对于初学者来说，应该是很混淆的。事实上，哪怕对于老手，也不一定能够很好地说清楚。</p>
 <p>这一切，还得从one-hot说起…</p>
 <h3 id="1-One-hot"><a href="#1-One-hot" class="headerlink" title="1. One-hot"></a>1. One-hot</h3><p>One-hot(One-hot编码)也称作一位有效编码，即在一个向量表示中只有一个分量是有效的，例如“学校就在前方”对应的one-hot编码即可表示为：</p>
-<p><script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> </script><br>$$<br>\begin{array}{c|c}<br>\hline<br>\text{学} &amp; [1, 0, 0, 0, 0, 0]\<br>\text{校} &amp; [0, 1, 0, 0, 0, 0]\<br>\text{就} &amp; [0, 0, 1, 0, 0, 0]\<br>\text{在} &amp; [0, 0, 0, 1, 0, 0]\<br>\text{前} &amp; [0, 0, 0, 0, 1, 0]\<br>\text{方} &amp; [0, 0, 0, 0, 0, 1]\<br>\hline<br>\end{array}<br>$$</p>
+<p><script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><br>$$<br>\begin{array}{c|c}<br>\hline<br>\text{学} &amp; [1, 0, 0, 0, 0, 0]\<br>\text{校} &amp; [0, 1, 0, 0, 0, 0]\<br>\text{就} &amp; [0, 0, 1, 0, 0, 0]\<br>\text{在} &amp; [0, 0, 0, 1, 0, 0]\<br>\text{前} &amp; [0, 0, 0, 0, 1, 0]\<br>\text{方} &amp; [0, 0, 0, 0, 0, 1]\<br>\hline<br>\end{array}<br>$$</p>
 <p>那么对应的“学校”这个词就可以用如下字向量构成的矩阵对应表示：</p>
-<p><script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> </script><br>$$<br>\begin{pmatrix}1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\  0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}<br>$$</p>
+<p><script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script><br>$$<br>\begin{pmatrix}1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\  0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}<br>$$</p>
 <p>看到这儿，大家可能感觉到问题了，有多少个字，就得有多少维向量，假如有1万字，那么每个字向量就是1万维（但常用的字不多，可能也就几千个左右，但是按照词的概念来看，常用的词可能就有十几万了）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这时候，我们在有的地方会看到有些初学者这样说的，甚至不少专家也是这样说的:"这时候我们就考虑出来了“连续向量表示”，比如用100维的实数向量来表示一个字，这样就大大降低了维度，降低了过拟合的风险，降低了运算量等等"</span></span><br></pre></td></tr></table></figure>
 <p>其实稍微一想也应该知道：<strong>稀疏矩阵是更便于计算</strong>的呀，甚至在机器学习中有不少地方专门为了将数据矩阵<strong>稀疏化</strong>来降低运算量。稍微举个例子：<br>$$<br>\begin{pmatrix}1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0\  0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}<br>\begin{pmatrix}w{11} &amp; w{12} &amp; w{13} \ w{21} &amp; w{22} &amp; w{23}\  w{31} &amp; w{32} &amp; w{33}\ w{41} &amp; w{42} &amp; w{43}\  w{51} &amp; w{52} &amp; w{53}\  w{61} &amp; w{62} &amp; w{63}\end{pmatrix} =<br>\begin{pmatrix}w{11} &amp; w{12} &amp; w{13}\  w{21} &amp; w{22} &amp; w{23}\end{pmatrix}<br>$$<br>左边的形式表明，这是一个以2x6的one-hot矩阵的为输入、中间层节点数为3的全连接神经网络层，但你看右边，不就相当于在w~ij~这个矩阵中，取出第1、2行，这不是跟所谓的字向量的查表（从表中找出对应字的向量）是一样的吗？事实上，正是如此，这就是所谓的Embedding层，Embedding层就是以one-hot为输入、中间层节点为字向量维数的全连接层，而这个全连接层的参数，就是一个“字向量表”。</p>
@@ -695,6 +695,8 @@
   
 
   
+  
+
 
   
 
