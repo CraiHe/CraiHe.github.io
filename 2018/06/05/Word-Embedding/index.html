@@ -87,7 +87,7 @@
 <meta property="og:site_name" content="CraiHe&#39;s">
 <meta property="og:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
 <meta property="og:locale" content="en">
-<meta property="og:updated_time" content="2018-06-08T01:17:42.000Z">
+<meta property="og:updated_time" content="2018-06-08T01:21:01.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Word Embedding">
 <meta name="twitter:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
@@ -306,7 +306,7 @@
 <script type="math/tex; mode=display">
 \begin{array}{c|c}
 \hline
-\text{学} & [1, 0, 0, 0, 0, 0]\\\ 
+\text{学} & [1, 0, 0, 0, 0, 0]\\
 \text{校} & [0, 1, 0, 0, 0, 0]\\ 
 \text{就} & [0, 0, 1, 0, 0, 0]\\ 
 \text{在} & [0, 0, 0, 1, 0, 0]\\ 
@@ -315,7 +315,7 @@
 \hline 
 \end{array}</script><p>那么对应的“学校”这个词就可以用如下字向量构成的矩阵对应表示：</p>
 <script type="math/tex; mode=display">
-\begin{pmatrix}1 & 0 & 0 & 0 & 0 & 0 \\\  0 & 1 & 0 & 0 & 0 & 0 \end{pmatrix}</script><p>看到这儿，大家可能感觉到问题了，有多少个字，就得有多少维向量，假如有1万字，那么每个字向量就是1万维（但常用的字不多，可能也就几千个左右，但是按照词的概念来看，常用的词可能就有十几万了）</p>
+\begin{pmatrix}1 & 0 & 0 & 0 & 0 & 0 \\  0 & 1 & 0 & 0 & 0 & 0 \end{pmatrix}</script><p>看到这儿，大家可能感觉到问题了，有多少个字，就得有多少维向量，假如有1万字，那么每个字向量就是1万维（但常用的字不多，可能也就几千个左右，但是按照词的概念来看，常用的词可能就有十几万了）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这时候，我们在有的地方会看到有些初学者这样说的，甚至不少专家也是这样说的:"这时候我们就考虑出来了“连续向量表示”，比如用100维的实数向量来表示一个字，这样就大大降低了维度，降低了过拟合的风险，降低了运算量等等"</span></span><br></pre></td></tr></table></figure>
 <p>其实稍微一想也应该知道：<strong>稀疏矩阵是更便于计算</strong>的呀，甚至在机器学习中有不少地方专门为了将数据矩阵<strong>稀疏化</strong>来降低运算量。稍微举个例子：</p>
 <script type="math/tex; mode=display">
