@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="en">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="nlp," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
+<meta name="keywords" content="nlp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Word Embedding">
+<meta property="og:url" content="http://yoursite.com/2018/06/05/Word-Embedding/index.html">
+<meta property="og:site_name" content="CraiHe&#39;s">
+<meta property="og:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-06-08T01:17:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Word Embedding">
+<meta name="twitter:description" content="词向量（Word embedding, 词嵌入）词向量(Word Embedding)，按照字面意思应该是”词嵌入“，或称分布式表示(Distributed Representation) 「其实这三种描述方式中，Distributed Representation是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/05/Word-Embedding/"/>
+
+
+
+
+
+  <title>Word Embedding | CraiHe's</title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CraiHe's</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Recording minds.</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/05/Word-Embedding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CraiHe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CraiHe's">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Word Embedding</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-05T13:41:51+08:00">
+                2018-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="词向量（Word-embedding-词嵌入）"><a href="#词向量（Word-embedding-词嵌入）" class="headerlink" title="词向量（Word embedding, 词嵌入）"></a>词向量（Word embedding, 词嵌入）</h2><p><strong>词向量(Word Embedding)</strong>，按照字面意思应该是”<strong>词嵌入</strong>“，或称<strong>分布式表示(Distributed Representation)</strong> 「其实这三种描述方式中，<strong>Distributed Representation</strong>是一种神经网络生成词向量的方式」。说到词向量，不少人可能会首先想到Google的Word2Vec「这个太出名」。另外，用Keras之类的框架还有一个Embedding层，也说是将词ID映射为向量。由于先入为主的意识，大家可能就会将词向量跟Word2Vec等同起来，而反过来问“Embedding是哪种词向量？”这类问题，尤其是对于初学者来说，应该是很混淆的。事实上，哪怕对于老手，也不一定能够很好地说清楚。</p>
+<p>这一切，还得从one-hot说起…</p>
+<h3 id="1-One-hot"><a href="#1-One-hot" class="headerlink" title="1. One-hot"></a>1. One-hot</h3><p>One-hot(One-hot编码)也称作一位有效编码，即在一个向量表示中只有一个分量是有效的，例如“学校就在前方”对应的one-hot编码即可表示为：</p>
+<script type="math/tex; mode=display">
+\begin{array}{c|c}
+\hline
+\text{学} & [1, 0, 0, 0, 0, 0]\\\ 
+\text{校} & [0, 1, 0, 0, 0, 0]\\ 
+\text{就} & [0, 0, 1, 0, 0, 0]\\ 
+\text{在} & [0, 0, 0, 1, 0, 0]\\ 
+\text{前} & [0, 0, 0, 0, 1, 0]\\ 
+\text{方} & [0, 0, 0, 0, 0, 1]\\ 
+\hline 
+\end{array}</script><p>那么对应的“学校”这个词就可以用如下字向量构成的矩阵对应表示：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}1 & 0 & 0 & 0 & 0 & 0 \\\  0 & 1 & 0 & 0 & 0 & 0 \end{pmatrix}</script><p>看到这儿，大家可能感觉到问题了，有多少个字，就得有多少维向量，假如有1万字，那么每个字向量就是1万维（但常用的字不多，可能也就几千个左右，但是按照词的概念来看，常用的词可能就有十几万了）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这时候，我们在有的地方会看到有些初学者这样说的，甚至不少专家也是这样说的:"这时候我们就考虑出来了“连续向量表示”，比如用100维的实数向量来表示一个字，这样就大大降低了维度，降低了过拟合的风险，降低了运算量等等"</span></span><br></pre></td></tr></table></figure>
+<p>其实稍微一想也应该知道：<strong>稀疏矩阵是更便于计算</strong>的呀，甚至在机器学习中有不少地方专门为了将数据矩阵<strong>稀疏化</strong>来降低运算量。稍微举个例子：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}1 & 0 & 0 & 0 & 0 & 0\\  0 & 1 & 0 & 0 & 0 & 0 \end{pmatrix}
+\begin{pmatrix}w{11} & w{12} & w{13} \\ w{21} & w{22} & w{23}\\  w{31} & w{32} & w{33}\\ w{41} & w{42} & w{43}\\  w{51} & w{52} & w{53}\\  w{61} & w{62} & w{63}\end{pmatrix} = 
+\begin{pmatrix}w{11} & w{12} & w{13}\\  w{21} & w{22} & w{23}\end{pmatrix}</script><p>左边的形式表明，这是一个以2x6的one-hot矩阵的为输入、中间层节点数为3的全连接神经网络层，但你看右边，不就相当于在w~ij~这个矩阵中，取出第1、2行，这不是跟所谓的字向量的查表（从表中找出对应字的向量）是一样的吗？事实上，正是如此，这就是所谓的Embedding层，Embedding层就是以one-hot为输入、中间层节点为字向量维数的全连接层，而这个全连接层的参数，就是一个“字向量表”。</p>
+<blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="comment">#One-hot会导致“词汇鸿沟”现象：即任意两个词之间都是孤立的，单单从这两个向量中看不出两个词是否有关系，哪怕是“话筒”和“麦克“这样的同义词也不能幸免于难。</span></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="2-词向量表示"><a href="#2-词向量表示" class="headerlink" title="2. 词向量表示"></a>2. 词向量表示</h3><p>以上举例对应的是<strong>“字”在“句子”中的向量表示</strong>，而我们一般在实际中考虑的是<strong>“词”在“文档”中的向量表示 </strong>( 其中”文档”不一定是实际意义上的文档——可能是以段落划分成，也可能以某个特殊的约定方式将给定的文本数据进行划分<strong>「eg：一个章节etc..」</strong>) ，还是举两个例子吧，首先举个简单的中文例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">“地上”表示为 [0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 …]</span><br><span class="line">“有”表示为 [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 …]</span><br><span class="line">“话筒”表示为 [0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 …]</span><br></pre></td></tr></table></figure>
+<p>进一步地，”地上有话筒”可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{pmatrix}0&0 &0 &1& 0& 0 &0 &0&0& 0 &0& 0& 0& 0& 0 &0& …\\  0& 0& 0& 0& 0& 0& 0& 0& 0& 0& 0& 0 &0& 0 &0& 1 &…\\0 &0& 0 &0 &0 &0& 0& 0& 1& 0& 0& 0& 0 &0 &0 &0& … \end{pmatrix}</script><p>再比如对于现有四个文本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;I come to China to travel&quot;, </span><br><span class="line">&quot;This is a car polupar in China&quot;,          </span><br><span class="line">&quot;I love tea and Apple &quot;,   </span><br><span class="line">&quot;The work is to write some papers in science&quot;</span><br></pre></td></tr></table></figure>
+<p>转换成词向量模式（可通过sklearn的CountVectorizer类来完成，这个类可以帮我们完成文本的词频统计与向量化 — 对应代码如下），</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.feature_extraction.text <span class="keyword">import</span> CountVectorizer  </span><br><span class="line">vectorizer=CountVectorizer()</span><br><span class="line">corpus=[<span class="string">"I come to China to travel"</span>, </span><br><span class="line">    	<span class="string">"This is a car polupar in China"</span>,          </span><br><span class="line">    	<span class="string">"I love tea and Apple "</span>,   </span><br><span class="line">    	<span class="string">"The work is to write some papers in science"</span>] </span><br><span class="line"><span class="comment">#print vectorizer.fit_transform(corpus) #这步分别看各个词的统计词频</span></span><br><span class="line"><span class="keyword">print</span> vectorizer.fit_transform(corpus).toarray()</span><br><span class="line"><span class="keyword">print</span> vectorizer.get_feature_names()</span><br></pre></td></tr></table></figure>
+<p>可以得到”每个文本的词向量特征”以及”各个特征代表的词”如下输出：</p>
+<blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; [[0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 2 1 0 0]</span><br><span class="line">&gt;  [0 0 1 1 0 1 1 0 0 1 0 0 0 0 1 0 0 0 0]</span><br><span class="line">&gt;  [1 1 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0]</span><br><span class="line">&gt;  [0 0 0 0 0 1 1 0 1 0 1 1 0 1 0 1 0 1 1]]</span><br><span class="line">&gt; [u&apos;and&apos;, u&apos;apple&apos;, u&apos;car&apos;, u&apos;china&apos;, u&apos;come&apos;, u&apos;in&apos;, u&apos;is&apos;, u&apos;love&apos;, u&apos;papers&apos;, u&apos;polupar&apos;, u&apos;science&apos;, u&apos;some&apos;, u&apos;tea&apos;, u&apos;the&apos;, u&apos;this&apos;, u&apos;to&apos;, u&apos;travel&apos;, u&apos;work&apos;, u&apos;write&apos;]</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>可以看到我们一共有19个词，所以4个文本都是19维的特征向量。而每一维的向量依次对应了下面的19个词。另外由于词”I”在英文中是停用词，不参加词频的统计。</p>
+<p>由于大部分的文本都只会使用词汇表中的很少一部分的词，因此我们的词向量中会有大量的0。也就是说词向量是<strong>稀疏</strong>的。在<em>实际应用中一般使用<strong>稀疏矩阵</strong>来存储</em>。</p>
+<p>将文本做了词频统计后，我们一般会通过<em>TF-IDF</em>进行词<strong>特征值修订</strong>，这部分我们后面再讲。</p>
+<p>向量化的方法很好用，也很直接，但是在有些场景下很难使用，比如分词后的词汇表非常大，很容易就达到100w+，<strong>此时如果我们直接使用向量化的方法，将对应的样本对应特征矩阵载入内存，有可能将内存撑爆</strong>，在这种情况下我们怎么办呢？第一反应是我们要进行<strong>特征降维</strong>，说的没错！而<strong>Hash Trick</strong>就是非常常用的文本特征降维方法。</p>
+<h3 id="3-词向量的生成方式"><a href="#3-词向量的生成方式" class="headerlink" title="3. 词向量的生成方式"></a>3. 词向量的生成方式</h3><blockquote>
+<p>词向量的生成通常和语言模型LM绑定在一起。</p>
+</blockquote>
+<p><strong>1.</strong> 一种最简单的词向量方式是：One-hot representation；</p>
+<p><strong>2.</strong> 另一种：Distributed representation ，最早是 Hinton 于 1986 年提出，它可以克服one-hot的两个缺点「1.维数灾难；2.词汇鸿沟」，其基本想法是：</p>
+<blockquote>
+<p>通过训练将某种语言中的每一个词映射成一个固定长度的短向量（当然这里的“短”是相对于 one-hot representation 的“长”而言的），将所有这些向量放在一起形成一个词向量空间，而每一向量则为该空间中的一个点，在这个空间上引入“距离”，则可以根据词之间的距离来判断它们之间的（词法、语义上的）相似性了。</p>
+</blockquote>
+<ul>
+<li><strong>基于NNLM神经网络</strong>的<strong>早期经典语言模型</strong>：用神经网络来训练语言模型的思想最早由百度 IDL （深度学习研究院）的徐伟提出。 这方面最经典的文章要数 Bengio 于 2003 年发表在 JMLR 上的 A Neural Probabilistic Language Model；<ul>
+<li>C&amp;W(Ronan Collobert &amp; Jason Weston)的语言模型：其对应开源了系统SENNA；</li>
+<li>M&amp;H(Andriy Mnih 和 Geoffrey Hinton)的：<ul>
+<li>LBL(Log-Bilinear)语言模型；</li>
+<li>HLBL(hierarchical log-bilinear)语言模型；</li>
+</ul>
+</li>
+<li>Mikolov 的 RNNLM；</li>
+</ul>
+</li>
+<li><em>Google提出</em>的<strong>Word2Vec</strong></li>
+</ul>
+<blockquote>
+<p>这里还要说明一下<a href="https://zhuanlan.zhihu.com/p/22386230" target="_blank" rel="noopener">“Distributional Representation“和”Distributed Representation”的区别</a>。</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/nlp/" rel="tag"># nlp</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">CraiHe</p>
+              <p class="site-description motion-element" itemprop="description">To believe, to gain.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#词向量（Word-embedding-词嵌入）"><span class="nav-number">1.</span> <span class="nav-text">词向量（Word embedding, 词嵌入）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-One-hot"><span class="nav-number">1.1.</span> <span class="nav-text">1. One-hot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-词向量表示"><span class="nav-number">1.2.</span> <span class="nav-text">2. 词向量表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-词向量的生成方式"><span class="nav-number">1.3.</span> <span class="nav-text">3. 词向量的生成方式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CraiHe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+  
+
+  
+
+</body>
+</html>
